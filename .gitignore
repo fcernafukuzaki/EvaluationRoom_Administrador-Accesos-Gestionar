@@ -1,0 +1,9 @@
+.idea/
+templates/
+tests/
+venv/
+
+settings.py
+
+*.py_
+*.pyc
