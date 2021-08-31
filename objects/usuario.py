@@ -9,7 +9,7 @@ class Usuario(db.Model):
     correoelectronico = db.Column(db.String())
     activo = db.Column(db.Boolean())
     
-    def __init__(self, id_usuario, nombre=None, email=None, activo=False):
+    def __init__(self, id_usuario=None, nombre=None, email=None, activo=False):
         self.idusuario = id_usuario
         self.nombre = nombre
         self.correoelectronico = email

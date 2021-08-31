@@ -7,7 +7,7 @@ class Perfil(db.Model):
     idperfil = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String())
     
-    def __init__(self, id_perfil, nombre=None):
+    def __init__(self, id_perfil=None, nombre=None):
         self.idperfil = id_perfil
         self.nombre = nombre
 
