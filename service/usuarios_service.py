@@ -1,7 +1,7 @@
 from configs.flask_config import db
-from objects.usuario import Usuario, UsuarioSchema
+from objects.usuario import Usuario, UsuarioSchema, UsuarioInfoSchema
 
-usuario_schema = UsuarioSchema()
+usuario_info_schema = UsuarioInfoSchema()
 usuarios_schema = UsuarioSchema(many=True)
 
 class UsuariosService():
@@ -27,7 +27,7 @@ class UsuariosService():
             usuario = db.session.query(Usuario).filter(Usuario.idusuario==uid).all()
             
             if usuario:
-                result, code, message = usuario_schema.dump(usuario[0]), 200, 'Se encontró usuario.'
+                result, code, message = usuario_info_schema.dump(usuario[0]), 200, 'Se encontró usuario.'
             else:
                 code, message = 404, 'No existe usuario.'
         except Exception as e:
