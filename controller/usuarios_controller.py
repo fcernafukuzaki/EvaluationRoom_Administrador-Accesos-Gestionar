@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from flask_restful import Resource
+from datetime import datetime
 from common.util import field_in_dict, get_response_body, str2bool
 from service.authorizer_service import AuthorizerService
 from service.usuarios_service import UsuariosService
@@ -79,7 +80,26 @@ class UsuariosController(Resource):
                 perfiles = input_json['perfiles'] if field_in_dict(input_json, 'perfiles') else None
 
                 result, code, message = usuarios_service.update_usuario(uid, nombre, correoelectronico, activo, perfiles)
-                response_body = {'usuario':result} if result else None
+                
+                user_message = message
+                if not perfiles:
+                    resultado, code, message = usuarios_service.get_usuario(idusuario)
+                    perfiles_eliminar = [t["idperfil"] for t in resultado["perfiles"]]
+                    _, code, message = usuarios_service.delete_perfiles(idusuario, perfiles_eliminar)
+                    user_message = f"{user_message} {message}"
+                if perfiles:
+                    resultado, code, message = usuarios_service.get_usuario(idusuario)
+                    idperfiles_original = [t["idperfil"] for t in resultado["perfiles"]]
+                    perfiles_nuevo = [t for t in perfiles if t not in idperfiles_original]
+                    perfiles_eliminar = [t for t in idperfiles_original if t not in perfiles]
+                    
+                    _, code, message = usuarios_service.delete_perfiles(idusuario, perfiles_eliminar)
+                    user_message = f"{user_message} {message}"
+                    
+                    _, code, message = usuarios_service.add_perfiles(idusuario, perfiles_nuevo)
+                    user_message = f"{user_message} {message}"
+                
+                response_body = {'usuario':{'uid':result, 'datetime':datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")}} if result else None
             else:
                 code, message = 403, 'Operación inválida.'
             user_message = message

@@ -1,8 +1,10 @@
 from configs.flask_config import db
 from objects.usuario import Usuario, UsuarioSchema, UsuarioInfoSchema
+from objects.usuario_perfil import UsuarioPerfil
 
 usuario_info_schema = UsuarioInfoSchema()
 usuarios_schema = UsuarioSchema(many=True)
+usuario_schema = UsuarioSchema()
 
 class UsuariosService():
 
@@ -62,6 +64,36 @@ class UsuariosService():
             result, code, message = uid, 200, 'Se actualizó usuario en base de datos.'
         except Exception as e:
             code, message = 503, f'Hubo un error al actualizar usuario en base de datos {e}'
+        finally:
+            print(message)
+            return result, code, message
+    
+    def delete_perfiles(self, uid, idperfiles):
+        result = None
+        try:
+            for perfil in idperfiles:
+                usuario_perfil = UsuarioPerfil.query.get((uid, perfil))
+                if usuario_perfil:
+                    db.session.delete(usuario_perfil)
+                    db.session.commit()
+            result, code, message = uid, 200, 'Se eliminó perfil en base de datos.'
+        except Exception as e:
+            code, message = 503, f'Hubo un error al eliminar perfil en base de datos {e}'
+        finally:
+            print(message)
+            return result, code, message
+    
+    def add_perfiles(self, uid, perfiles):
+        result = None
+        try:
+            for perfil in perfiles:
+                usuario_perfil = UsuarioPerfil(uid, perfil['idPerfil'])
+                db.session.add(usuario_perfil)
+                db.session.commit()
+            
+            result, code, message = uid, 200, f'Se registró perfiles al usuario {uid} en base de datos.'
+        except Exception as e:
+            code, message = 503, f'Hubo un error al registrar perfiles al usuario {uid} en base de datos {e}'
         finally:
             print(message)
             return result, code, message
