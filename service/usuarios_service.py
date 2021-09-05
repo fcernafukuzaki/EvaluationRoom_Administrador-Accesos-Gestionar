@@ -4,7 +4,6 @@ from objects.usuario_perfil import UsuarioPerfil
 
 usuario_info_schema = UsuarioInfoSchema()
 usuarios_schema = UsuarioSchema(many=True)
-usuario_schema = UsuarioSchema()
 
 class UsuariosService():
 
